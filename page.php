@@ -12,6 +12,7 @@ while(have_posts()) {
         </div>
       </div>
     </div>
+    
     <div class="container container--narrow page-section">
 
 <?php 
