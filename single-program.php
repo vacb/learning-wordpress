@@ -23,6 +23,66 @@ while(have_posts()) {
         <div class="generic-content">
             <?php the_content(); ?>
         </div>
+
+        <?php
+            $today = date('Ymd');
+            $homepageEvents = new WP_Query(array(
+                'posts_per_page' => 2,
+                'post_type' => 'event',
+                'meta_key' => 'event_date',
+                'orderby' => 'meta_value_num',
+                'order' => 'ASC',
+                'meta_query' => array(
+                // One inner array for each filter
+                    array(
+                        'key' => 'event_date',
+                        'compare' => '>=',
+                        'value' => $today,
+                        'type' => 'numeric'
+                    ),
+                    array(
+                        'key' => 'related_program',
+                        'compare' => 'LIKE',
+                        // Concatenate in "" to search for "12" rather than 12, say - arrays are serialised to this avoids false positives
+                        'value' => '"' . get_the_ID() . '"'
+                    )
+                )
+            ));
+
+            while($homepageEvents->have_posts()) {
+                $homepageEvents->the_post(); ?>
+                    <div class="event-summary">
+                        <a class="event-summary__date t-center" href="#">
+                        <span class="event-summary__month">
+                            <?php 
+                            $eventDate = new DateTime(get_field('event_date'));
+                            echo $eventDate->format('M');
+                        ?>
+                        </span>
+                        <span class="event-summary__day">
+                        <?php 
+                            $eventDate = new DateTime(get_field('event_date'));
+                            echo $eventDate->format('d');
+                        ?>
+                        </span>
+                        </a>
+                        <div class="event-summary__content">
+                        <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
+                        <p>
+                        <?php if (has_excerpt()) {
+                                echo get_the_excerpt();
+                                } else {
+                                echo wp_trim_words(get_the_content(), 18);
+                                }
+                                ?>
+                                <a href="<?php the_permalink(); ?>" class="nu gray">Learn more</a></p>
+                        </div>
+                    </div>
+
+                <?php 
+            }
+            ?>
+
     </div>
    
 <?php 
