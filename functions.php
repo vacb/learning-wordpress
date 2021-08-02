@@ -29,3 +29,26 @@ function university_features() {
 add_action('after_setup_theme', 'university_features');
 
 // Events custom post type removed and added to wp-content/mu-plugins/university-post-types.php
+
+// Code to adjust default queries e.g. want to sort and filter event archive page
+
+function university_adjust_queries ($query) {
+    // Manipulate query object when received from WP
+    // Add  $query->is_main_query() to make sure we're not manipulating a custom query
+    if (!is_admin() AND is_post_type_archive('event') AND $query->is_main_query()) {
+        $today = date('Ymd');
+        $query->set('meta_key', 'event_date');
+        $query->set('orderby', 'meta_value_num');
+        $query->set('order', 'ASC');
+        $query->set('meta_query', array(
+            array(
+              'key' => 'event_date',
+              'compare' => '>=',
+              'value' => $today,
+              'type' => 'numeric'
+            )
+            ));
+    }
+}
+
+add_action('pre_get_posts', 'university_adjust_queries');
