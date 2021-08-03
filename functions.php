@@ -28,6 +28,7 @@ function university_features() {
     // Nickname, width, height, crop (default: false)
     add_image_size('academicLandscape', 400, 260, true);
     add_image_size('academicPortrait', 480, 650, true);
+    add_image_size('pageBanner', 1500, 350, true);
 }
 
 add_action('after_setup_theme', 'university_features');
