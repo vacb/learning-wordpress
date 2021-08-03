@@ -1,5 +1,35 @@
 <?php 
 
+// $args = NULL provides a default value for where we want headers with no custom title requirement
+function pageBanner($args = NULL) {
+    if (!$args['title']) {
+        $args['title'] = get_the_title();
+    }
+    if (!$args['subtitle']) {
+        $args['subtitle'] = get_field('page_banner_subtitle');
+    }
+    if (!$args['photo']) {
+        // Check to see if the current post has a banner image custom field value and make sure the current query is not an archive or a blog listing
+        // The second two conditions avoid using the wrong banner image if first event in the list of events has a background image
+        if (get_field('page_banner_background_image') AND !is_archive() AND !is_home() ) {
+            $args['photo'] = get_field('page_banner_background_image')['sizes']['pageBanner'];
+        } else {
+            $args['photo'] = get_theme_file_uri('/images/ocean.jpg');
+        }    
+    }
+    ?>
+        <div class="page-banner">
+            <div class="page-banner__bg-image" style="background-image: url(<?php echo $args['photo'] ?>)"></div>
+            <div class="page-banner__content container container--narrow">
+                <h1 class="page-banner__title"><?php echo $args['title']; ?></h1>
+                <div class="page-banner__intro">
+                    <p><?php echo $args['subtitle'] ?></p>
+                </div>
+            </div>
+        </div>
+    <?php
+}
+
 // Create function and point it to the css file. For default use get_stylesheet_uri() function
 // wp_enqueue_style( $handle, $src, $deps, $ver, $media );
 // wp_enqueue_script( $handle, $src, $deps, $ver, $in_footer );
