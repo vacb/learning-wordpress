@@ -45,12 +45,21 @@ while(have_posts()) {
                 echo '<hr class="section-break">';
                 echo '<h2 class="headline headline--medium">' . get_the_title() . ' Academics</h2>';
 
+                echo '<ul class="academic-cards">';
                 while($relatedAcademics->have_posts()) {
                     $relatedAcademics->the_post(); ?>
-                    <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
+                    <li class="academic-card__list-item">
+                        <a class="academic-card" href="<?php the_permalink(); ?>">
+                            <img class="academic-card__image" src="<?php the_post_thumbnail_url('academicLandscape'); ?>">
+                            <span class="academic-card__name">
+                                <?php the_title(); ?>
+                            </span>
+                        </a>
+                    </li>
 
                     <?php 
                 }
+                echo '</ul>';
             }
 
             // Reset the global post object, including the data returned by the_title() and the_ID() used below, back to the default url-based query

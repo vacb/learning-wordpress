@@ -18,12 +18,16 @@ add_action('wp_enqueue_scripts', 'university_files');
 function university_features() {
     // Sets page title
     add_theme_support( 'title-tag' );
-
     // Removed dynamic nav per tutorial, but left for reference:
         // register_nav_menu('headerMenuLocation', 'Header Menu Location');
         // register_nav_menu('footerMenuLocationOne', 'Footer Menu Location One');
         // register_nav_menu('footerMenuLocationTwo', 'Footer Menu Location Two');
         // Then you can set up and edit menu in wp-admin
+    add_theme_support('post-thumbnails');
+    // Add another size option to the defaults created by WP (won't retroactively create without Regenerate Thumbnails plugin)
+    // Nickname, width, height, crop (default: false)
+    add_image_size('academicLandscape', 400, 260, true);
+    add_image_size('academicPortrait', 480, 650, true);
 }
 
 add_action('after_setup_theme', 'university_features');
