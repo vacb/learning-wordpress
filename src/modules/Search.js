@@ -6,8 +6,10 @@ class Search {
     this.openButton = $(".js-search-trigger");
     this.closeButton = $(".search-overlay__close");
     this.searchOverlay = $(".search-overlay");
+    this.searchField = $("#search-term");
     this.events();
     this.isOverlayOpen = false;
+    this.typingTimer;
   }
 
   // Events
@@ -17,6 +19,7 @@ class Search {
     // keyup fires once, keydown fires multiple times as long as you hold down the key
     // Added loging in keyPressDispatcher below to ensure it only calls once either way
     $(document).on("keydown", this.keyPressDispatcher.bind(this));
+    this.searchField.on("keydown", this.typingLogic.bind(this));
   }
 
   // Methods (function/action)
@@ -45,6 +48,12 @@ class Search {
     if (keyPressed.key == "Escape" && this.isOverlayOpen) {
       this.closeOverlay();
     }
+  }
+  typingLogic() {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(function () {
+      console.log("Timeout test");
+    }, 2000);
   }
 }
 

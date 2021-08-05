@@ -4056,8 +4056,10 @@ class Search {
     this.openButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".js-search-trigger");
     this.closeButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__close");
     this.searchOverlay = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay");
+    this.searchField = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#search-term");
     this.events();
     this.isOverlayOpen = false;
+    this.typingTimer;
   } // Events
 
 
@@ -4067,6 +4069,7 @@ class Search {
     // Added loging in keyPressDispatcher below to ensure it only calls once either way
 
     jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on("keydown", this.keyPressDispatcher.bind(this));
+    this.searchField.on("keydown", this.typingLogic.bind(this));
   } // Methods (function/action)
 
 
@@ -4093,6 +4096,13 @@ class Search {
     if (keyPressed.key == "Escape" && this.isOverlayOpen) {
       this.closeOverlay();
     }
+  }
+
+  typingLogic() {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(function () {
+      console.log("Timeout test");
+    }, 2000);
   }
 
 }
