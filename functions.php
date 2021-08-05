@@ -1,5 +1,16 @@
 <?php 
 
+// Adding custom fields to rest api
+
+function university_custom_rest() {
+    register_rest_field('post', 'authorName', array(
+        'get_callback' => function() {
+            return get_the_author();
+        }
+    ));
+}
+add_action('rest_api_init', 'university_custom_rest');
+
 // $args = NULL provides a default value for where we want headers with no custom title requirement
 function pageBanner($args = NULL) {
     if (!$args['title']) {
