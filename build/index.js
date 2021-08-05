@@ -4053,6 +4053,8 @@ __webpack_require__.r(__webpack_exports__);
 class Search {
   // Describe and create/initiate object
   constructor() {
+    // Must be first, otherwise elements we're using won't exist
+    this.addSearchHTML();
     this.openButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".js-search-trigger");
     this.closeButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__close");
     this.searchOverlay = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay");
@@ -4080,8 +4082,11 @@ class Search {
   openOverlay() {
     this.searchOverlay.addClass("search-overlay--active"); // Add class that removes scroll bar as soon as overlay is opened by hiding overflows
 
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").addClass("body-no-scroll");
-    this.isOverlayOpen = true; // console.log("Open method ran");
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").addClass("body-no-scroll"); // Empty out search field if you open the overlay a second time
+
+    this.searchField.val("");
+    setTimeout(() => this.searchField.trigger("focus"), 301);
+    this.isOverlayOpen = true;
   }
 
   closeOverlay() {
@@ -4114,7 +4119,7 @@ class Search {
           this.isSpinnerVisible = true;
         }
 
-        this.typingTimer = setTimeout(this.getResults.bind(this), 1000);
+        this.typingTimer = setTimeout(this.getResults.bind(this), 500);
       } else {
         this.resultsDiv.html("");
         this.isSpinnerVisible = false;
@@ -4136,6 +4141,23 @@ class Search {
           `);
       this.isSpinnerVisible = false;
     });
+  }
+
+  addSearchHTML() {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").append(` 
+      <div class="search-overlay">
+        <div class="search-overlay__top">
+          <div class="container">
+            <i class="fa fa-search search-overlay__icon" aria-hidden="true"></i>
+            <input type="text" class="search-term" placeholder="What are you looking for?" id="search-term" autocomplete="off">
+            <i class="fa fa-window-close search-overlay__close" aria-hidden="true"></i>
+          </div>
+        </div>
+      <div class="container">
+        <div class="search-overlay__results"></div>
+      </div>
+    </div>
+    `);
   }
 
 }

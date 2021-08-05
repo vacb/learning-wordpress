@@ -3,6 +3,8 @@ import $ from "jquery";
 class Search {
   // Describe and create/initiate object
   constructor() {
+    // Must be first, otherwise elements we're using won't exist
+    this.addSearchHTML();
     this.openButton = $(".js-search-trigger");
     this.closeButton = $(".search-overlay__close");
     this.searchOverlay = $(".search-overlay");
@@ -31,8 +33,10 @@ class Search {
     this.searchOverlay.addClass("search-overlay--active");
     // Add class that removes scroll bar as soon as overlay is opened by hiding overflows
     $("body").addClass("body-no-scroll");
+    // Empty out search field if you open the overlay a second time
+    this.searchField.val("");
+    setTimeout(() => this.searchField.trigger("focus"), 301);
     this.isOverlayOpen = true;
-    // console.log("Open method ran");
   }
 
   closeOverlay() {
@@ -69,7 +73,7 @@ class Search {
           this.resultsDiv.html('<div class="spinner-loader"></div>');
           this.isSpinnerVisible = true;
         }
-        this.typingTimer = setTimeout(this.getResults.bind(this), 1000);
+        this.typingTimer = setTimeout(this.getResults.bind(this), 500);
       } else {
         this.resultsDiv.html("");
         this.isSpinnerVisible = false;
@@ -106,6 +110,23 @@ class Search {
         this.isSpinnerVisible = false;
       }
     );
+  }
+
+  addSearchHTML() {
+    $("body").append(` 
+      <div class="search-overlay">
+        <div class="search-overlay__top">
+          <div class="container">
+            <i class="fa fa-search search-overlay__icon" aria-hidden="true"></i>
+            <input type="text" class="search-term" placeholder="What are you looking for?" id="search-term" autocomplete="off">
+            <i class="fa fa-window-close search-overlay__close" aria-hidden="true"></i>
+          </div>
+        </div>
+      <div class="container">
+        <div class="search-overlay__results"></div>
+      </div>
+    </div>
+    `);
   }
 }
 
