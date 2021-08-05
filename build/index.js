@@ -4132,14 +4132,17 @@ class Search {
 
   getResults() {
     // this.resultsDiv.html("Imagine real search results here.");
-    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + "/wp-json/wp/v2/posts?search=" + this.searchField.val(), posts => {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default.a.when(jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + "/wp-json/wp/v2/posts?search=" + this.searchField.val()), jquery__WEBPACK_IMPORTED_MODULE_0___default.a.getJSON(universityData.root_url + "/wp-json/wp/v2/pages?search=" + this.searchField.val())).then((posts, pages) => {
+      let combinedResults = posts[0].concat(pages[0]);
       this.resultsDiv.html(`
             <h2 class="search-overlay__section-title">Search Results</h2>
-            ${posts.length ? '<ul class="link-list min-list">' : "<p>Your search returned no results.</p>"}
-                ${posts.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join("")}
-            ${posts.length ? "</ul>" : ""}
+            ${combinedResults.length ? '<ul class="link-list min-list">' : "<p>Your search returned no results.</p>"}
+                ${combinedResults.map(item => `<li><a href="${item.link}">${item.title.rendered}</a></li>`).join("")}
+            ${combinedResults.length ? "</ul>" : ""}
           `);
       this.isSpinnerVisible = false;
+    }, () => {
+      this.resultsDiv.html("<p>Unexpected error; please try again.</p>");
     });
   }
 
