@@ -65,9 +65,9 @@
             // Run this in between queries
             wp_reset_postdata();
 
-            // Custom query to pull in the next two upcoming events for this program
+            // Custom query to pull in the next two upcoming events for this campus
             $today = date('Ymd');
-            $homepageEvents = new WP_Query(array(
+            $campusEvents = new WP_Query(array(
                 'posts_per_page' => 2,
                 'post_type' => 'event',
                 'meta_key' => 'event_date',
@@ -82,20 +82,20 @@
                         'type' => 'numeric'
                     ),
                     array(
-                        'key' => 'related_program',
+                        'key' => 'event_location',
                         'compare' => 'LIKE',
                         // Concatenate in "" to search for "12" rather than 12, say - arrays are serialised to this avoids false positives
                         'value' => '"' . get_the_ID() . '"'
                     )
                 )
             ));
-
-            if ($homepageEvents->have_posts()) {
+           
+            if ($campusEvents->have_posts()) {
                 echo '<hr class="section-break">';
-                echo '<h2 class="headline headline--medium">Upcoming ' .  get_the_title() . ' Events</h2>';
+                echo '<h2 class="headline headline--medium">Upcoming Events At The ' .  get_the_title() . ' Campus</h2>';
     
-                while($homepageEvents->have_posts()) {
-                    $homepageEvents->the_post();
+                while($campusEvents->have_posts()) {
+                    $campusEvents->the_post();
                     get_template_part('template-parts/content-event');
                 }
             }

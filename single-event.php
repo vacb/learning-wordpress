@@ -14,8 +14,27 @@
         <div class="generic-content">
             <?php the_content(); ?>
         </div>
-
         <?php
+
+            // Display related campuses for the event
+            $eventLocation = get_field('event_location');
+            echo $eventLocation;
+            if ($eventLocation) {
+                echo '<hr class="section-break">';
+                echo '<h2 class="headline headline--medium">Event Location:</h2>';
+
+                echo '<ul class="min-list link-list">';
+                foreach($eventLocation as $campus) {
+                    ?><li>
+                        <a href="<?php echo get_the_permalink($campus); ?>"><?php echo get_the_title($campus); ?></a>
+                    </li><?php
+                };
+                echo '</ul>';
+            }
+
+          // Reset post data
+            wp_reset_postdata();
+
           $relatedPrograms = get_field('related_program');
 
           if ($relatedPrograms) {
