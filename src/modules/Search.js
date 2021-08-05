@@ -25,23 +25,24 @@ class Search {
     // Add class that removes scroll bar as soon as overlay is opened by hiding overflows
     $("body").addClass("body-no-scroll");
     this.isOverlayOpen = true;
-    console.log("Open method ran");
+    // console.log("Open method ran");
   }
 
   closeOverlay() {
     this.searchOverlay.removeClass("search-overlay--active");
     $("body").removeClass("body-no-scroll");
     this.isOverlayOpen = false;
-    console.log("Close method ran");
+    // console.log("Close method ran");
   }
 
-  keyPressDispatcher(key) {
+  keyPressDispatcher(keyPressed) {
+    // keyCode deprecated
     // console.log(key.keyCode);
 
-    if (key.keyCode == 83 && !this.isOverlayOpen) {
+    if (keyPressed.key == "s" && !this.isOverlayOpen) {
       this.openOverlay();
     }
-    if (key.keyCode == 27 && this.isOverlayOpen) {
+    if (keyPressed.key == "Escape" && this.isOverlayOpen) {
       this.closeOverlay();
     }
   }

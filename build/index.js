@@ -4074,24 +4074,23 @@ class Search {
     this.searchOverlay.addClass("search-overlay--active"); // Add class that removes scroll bar as soon as overlay is opened by hiding overflows
 
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").addClass("body-no-scroll");
-    this.isOverlayOpen = true;
-    console.log("Open method ran");
+    this.isOverlayOpen = true; // console.log("Open method ran");
   }
 
   closeOverlay() {
     this.searchOverlay.removeClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").removeClass("body-no-scroll");
-    this.isOverlayOpen = false;
-    console.log("Close method ran");
+    this.isOverlayOpen = false; // console.log("Close method ran");
   }
 
-  keyPressDispatcher(key) {
+  keyPressDispatcher(keyPressed) {
+    // keyCode deprecated
     // console.log(key.keyCode);
-    if (key.keyCode == 83 && !this.isOverlayOpen) {
+    if (keyPressed.key == "s" && !this.isOverlayOpen) {
       this.openOverlay();
     }
 
-    if (key.keyCode == 27 && this.isOverlayOpen) {
+    if (keyPressed.key == "Escape" && this.isOverlayOpen) {
       this.closeOverlay();
     }
   }
