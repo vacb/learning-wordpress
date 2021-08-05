@@ -86,6 +86,11 @@
           <i class="fa fa-window-close search-overlay__close" aria-hidden="true"></i>
         </div>
       </div>
+      <div class="container">
+        <div class="search-overlay__results">
+          
+        </div>
+      </div>
     </div>
 
     <!-- Give wordpress the final say before closing the body tag - use to run scripts etc -->

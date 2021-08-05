@@ -4057,8 +4057,11 @@ class Search {
     this.closeButton = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__close");
     this.searchOverlay = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay");
     this.searchField = jquery__WEBPACK_IMPORTED_MODULE_0___default()("#search-term");
+    this.resultsDiv = jquery__WEBPACK_IMPORTED_MODULE_0___default()(".search-overlay__results");
     this.events();
     this.isOverlayOpen = false;
+    this.isSpinnerVisible = false;
+    this.previousValue;
     this.typingTimer;
   } // Events
 
@@ -4068,8 +4071,9 @@ class Search {
     this.closeButton.on("click", this.closeOverlay.bind(this)); // keyup fires once, keydown fires multiple times as long as you hold down the key
     // Added loging in keyPressDispatcher below to ensure it only calls once either way
 
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on("keydown", this.keyPressDispatcher.bind(this));
-    this.searchField.on("keydown", this.typingLogic.bind(this));
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on("keydown", this.keyPressDispatcher.bind(this)); // Keyup gives browser more time to register the input value, otherwise may not detect change
+
+    this.searchField.on("keyup", this.typingLogic.bind(this));
   } // Methods (function/action)
 
 
@@ -4089,7 +4093,8 @@ class Search {
   keyPressDispatcher(keyPressed) {
     // keyCode deprecated
     // console.log(key.keyCode);
-    if (keyPressed.key == "s" && !this.isOverlayOpen) {
+    if (keyPressed.key == "s" && !this.isOverlayOpen && // Ensure that this doesn't happen for users typing 's' in any input or text fields
+    !jquery__WEBPACK_IMPORTED_MODULE_0___default()("input, textarea").is(":focus")) {
       this.openOverlay();
     }
 
@@ -4099,10 +4104,30 @@ class Search {
   }
 
   typingLogic() {
-    clearTimeout(this.typingTimer);
-    this.typingTimer = setTimeout(function () {
-      console.log("Timeout test");
-    }, 2000);
+    // Only run if keypress changes the value of the search field i.e. exclude things like arrow keys etc
+    if (this.searchField.val() != this.previousValue) {
+      clearTimeout(this.typingTimer);
+
+      if (this.searchField.val()) {
+        if (!this.isSpinnerVisible) {
+          this.resultsDiv.html('<div class="spinner-loader"></div>');
+          this.isSpinnerVisible = true;
+        }
+
+        this.typingTimer = setTimeout(this.getResults.bind(this), 2000);
+      } else {
+        this.resultsDiv.html("");
+        this.isSpinnerVisible = false;
+      }
+    } // Set value for comparison at the start of the function
+
+
+    this.previousValue = this.searchField.val();
+  }
+
+  getResults() {
+    this.resultsDiv.html("Imagine real search results here.");
+    this.isSpinnerVisible = false;
   }
 
 }
