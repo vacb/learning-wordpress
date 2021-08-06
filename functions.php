@@ -1,5 +1,7 @@
 <?php 
 
+require get_theme_file_path('/includes/search-route.php');
+
 // Adding custom fields to rest api
 
 function university_custom_rest() {
