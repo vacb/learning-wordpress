@@ -58,7 +58,8 @@ function universitySearchResults($data) {
         if (get_post_type() == 'program') {
             array_push($results['programs'], array(
                 'title' => get_the_title(),
-                'permalink' => get_the_permalink()
+                'permalink' => get_the_permalink(),
+                'id' => get_the_id()
             ));
         }
 
@@ -87,6 +88,59 @@ function universitySearchResults($data) {
             ));
         }
         
+    }
+
+    // Additional query and related code to show academics related to search term
+
+    // Only run the code below if there are programs to find a relationship with
+    if($results['programs']) {
+      // Deal with situation where multiple programs are related to the search term e.g. human biology, advanced biology
+      // Default behaviour for WP with multiple conditions is 'AND' so specify 'OR' if required
+      $programsMetaQuery = array('relation' => 'OR');
+
+      foreach($results['programs'] as $item) {
+          array_push($programsMetaQuery, array(
+              'key' => 'related_program',
+              'compare' => 'LIKE',
+              'value' => '"' . $item['id'] . '"'
+          ));
+      }
+
+      // Additional custom query to search for academics related to the search term e.g. all Biology academics
+      $programRelationshipQuery = new WP_Query(array(
+          'post_type' => 'academic',
+          // Use meta query to search a custom field
+          'meta_query' => $programsMetaQuery
+
+          // REPLACED THIS WITH CODE TO ACCOUNT FOR MULTIPLE PROGRAMS RELATED TO SEARCH TERM
+          // 'meta_query' => array(
+          //    'relation' => 'OR',
+          //     array(
+          //         'key' => 'related_program',
+          //         'compare' => 'LIKE',
+          //         // Find id number of any programs that match the user's search term
+          //         // Added program id number to json for 'program' post type to facilitate this
+          //         // Search results will now show academics related to search term
+          //         'value' => '"' . $results['programs'][0]['id'] . '"'
+          // ))
+      ));
+
+      while($programRelationshipQuery->have_posts()) {
+          $programRelationshipQuery->the_post();
+          if (get_post_type() == 'academic') {
+              array_push($results['academics'], array(
+                  'title' => get_the_title(),
+                  'permalink' => get_the_permalink(),
+                  // 0 = current post
+                  'img' => get_the_post_thumbnail_url(0, 'academicLandscape')
+              ));
+          }
+      }
+      
+      // Remove duplicates caused by using more than one query with array_unique()
+      // SORT_REGULAR - added to work with associative arrays, i.e. please look within each sub-item of an array when determining if they are a duplicate or not
+      // Wrap in array_values() to remove index numbers added by array_unique()
+      $results['academics'] = array_values(array_unique($results['academics'], SORT_REGULAR));
     }
 
     return $results;
