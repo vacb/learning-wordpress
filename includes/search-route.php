@@ -56,11 +56,24 @@ function universitySearchResults($data) {
         }
 
         if (get_post_type() == 'program') {
-            array_push($results['programs'], array(
-                'title' => get_the_title(),
-                'permalink' => get_the_permalink(),
-                'id' => get_the_id()
-            ));
+
+          // Push related campuses into campus results array
+          $relatedCampuses = get_field('related_campus');
+          if ($relatedCampuses) {
+            foreach($relatedCampuses as $campus) {
+              array_push($results['campuses'], array(
+                'title' => get_the_title($campus),
+                'permalink' => get_the_permalink($campus)
+              ));
+            }
+          }
+
+          // Push programs into program results array
+          array_push($results['programs'], array(
+              'title' => get_the_title(),
+              'permalink' => get_the_permalink(),
+              'id' => get_the_id(),
+          ));
         }
 
         if (get_post_type() == 'event') {
@@ -108,7 +121,7 @@ function universitySearchResults($data) {
 
       // Additional custom query to search for academics related to the search term e.g. all Biology academics
       $programRelationshipQuery = new WP_Query(array(
-          'post_type' => 'academic',
+          'post_type' => array('academic', 'event'),
           // Use meta query to search a custom field
           'meta_query' => $programsMetaQuery
 
@@ -135,12 +148,33 @@ function universitySearchResults($data) {
                   'img' => get_the_post_thumbnail_url(0, 'academicLandscape')
               ));
           }
+          // Add event post type to the relational query
+          if (get_post_type() == 'event') {
+            $eventDate = new DateTime(get_field('event_date'));
+            $description = null;
+            if (has_excerpt()) {
+                $description = get_the_excerpt();
+            } else {
+                $description = wp_trim_words(get_the_content(), 18);
+            }
+
+            array_push($results['events'], array(
+                'title' => get_the_title(),
+                'permalink' => get_the_permalink(),
+                'month' => $eventDate->format('M'),
+                'day' => $eventDate->format('d'),
+                'description' => $description
+            ));
+        }
+
       }
       
       // Remove duplicates caused by using more than one query with array_unique()
       // SORT_REGULAR - added to work with associative arrays, i.e. please look within each sub-item of an array when determining if they are a duplicate or not
       // Wrap in array_values() to remove index numbers added by array_unique()
       $results['academics'] = array_values(array_unique($results['academics'], SORT_REGULAR));
+      // Remove duplicate events
+      $results['events'] = array_values(array_unique($results['events'], SORT_REGULAR));
     }
 
     return $results;
