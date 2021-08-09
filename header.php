@@ -31,7 +31,7 @@
                 <li <?php if (get_post_type() == 'event' OR is_page('past-events')) echo 'class="current-menu-item"'; ?>><a href="<?php echo get_post_type_archive_link('event') ?>">Events</a></li>
                 <li <?php if (get_post_type() == 'campus') echo 'class="current-menu-item"'; ?>><a href="<?php echo get_post_type_archive_link('campus'); ?>">Campuses</a></li>
                 <li <?php if (get_post_type() == 'post') echo 'class="current-menu-item"'; ?>><a href="<?php echo site_url('/blog'); ?>">Blog</a></li>
-                </ul>
+            </ul>
 
 
             </nav>
@@ -45,8 +45,8 @@
                 <?php
                     } else {
                 ?>
-                    <a href="#" class="btn btn--small btn--orange float-left push-right">Login</a>
-                    <a href="<?php echo esc_url(site_url('/wp-signup.php')); ?>" class="btn btn--small btn--dark-orange float-left">Sign Up</a>
+                    <a href="<?php echo wp_login_url(); ?>" class="btn btn--small btn--orange float-left push-right">Login</a>
+                    <a href="<?php echo wp_registration_url(); ?>" class="btn btn--small btn--dark-orange float-left">Sign Up</a>
                 <?php
                 } ?>
                 
