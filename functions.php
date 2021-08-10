@@ -56,7 +56,9 @@ function university_files() {
     
     // Creates a variable named universityData with properties as per the included associative array
     wp_localize_script('main-university-js', 'universityData', array(
-        'root_url' => get_site_url()
+        'root_url' => get_site_url(),
+        // When log into WP, generate secret property named nonce that = randomly generated number that WP creates just for our user session
+        'nonce' => wp_create_nonce('wp_rest')
     ));
 }
 
