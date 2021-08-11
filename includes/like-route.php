@@ -13,18 +13,41 @@ function universityLikeRoutes() {
 }
 
 function createLike($data) {
-  $academic = sanitize_text_field($data['academicId']);
+  if (is_user_logged_in()) {
+    $academic = sanitize_text_field($data['academicId']);
 
-  wp_insert_post(array(
-    'post_type' => 'like',
-    'post_status' => 'publish',
-    'post_title' => 'Second php test',
-    // Adds WP custom fields, also known as meta fields
-    'meta_input' => array(
-      // Uses ACF field name for the key name
-      'liked_academic_id' => $academic
-    )
-  ));
+    $existQuery = new WP_Query(array(
+      'author' => get_current_user_id(),
+      'post_type' => 'like',
+      'meta_query' => array(
+        array(
+          'key' => 'liked_academic_id',
+          'compare' => '=',
+          'value' => $academic
+        )
+      )
+    ));
+
+    // If like does not already exist (and ID number actually belongs to an academic), create new like post, else die and send 'invalid academic id'
+    if ($existQuery->found_posts == 0 AND get_post_type($academic) == 'academic') {
+      return wp_insert_post(array(
+        'post_type' => 'like',
+        'post_status' => 'publish',
+        'post_title' => 'Second php test',
+        // Adds WP custom fields, also known as meta fields
+        'meta_input' => array(
+          // Uses ACF field name for the key name
+          'liked_academic_id' => $academic
+        )
+      ));
+    } else {
+      die('Invalid academic ID');
+    }
+
+
+  } else {
+    die('Only logged in users can create a like.');
+  }
 }
 
 function deleteLike() {
