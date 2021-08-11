@@ -165,3 +165,25 @@ function ourLoginCSS() {
     wp_enqueue_style('university_main_styles', get_theme_file_uri('/build/style-index.css'));
     wp_enqueue_style('university_extra_styles', get_theme_file_uri('/build/index.css'));
 }
+
+// Force note posts to be private
+add_filter('wp_insert_post_data', 'makeNotePrivate');
+function makeNotePrivate($data) {
+    if ($data['post_type'] == 'note' AND $data['post-status'] != 'trash') {
+        $data['post_status'] = "private";
+    }
+    
+    return $data;
+}
+
+// Remove "Private: " from titles (not in lesson)
+// Use a regex to allow 'Private: ' in title if user manually entered it.
+add_filter('the_title', 'remove_private_prefix');
+function remove_private_prefix($title) {
+    if (get_post_status() == 'private') {
+      $regTitle = preg_replace('/^Private: /', '', $title);
+      return $regTitle;
+    } else {
+      return $title;
+    }
+  }
