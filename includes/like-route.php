@@ -44,12 +44,21 @@ function createLike($data) {
       die('Invalid academic ID');
     }
 
-
   } else {
     die('Only logged in users can create a like.');
   }
 }
 
-function deleteLike() {
-  return 'Thanks for trying to delete a like';
+function deleteLike($data) {
+  // Get id of like post to be deleted
+  $likeId = sanitize_text_field($data['like']);
+
+  // Make sure post being deleted belongs to current user and is of type 'like'
+  if(get_current_user_id() == get_post_field('post_author', $likeId) AND get_post_type($likeId) == 'like') {
+    // true skips the trash stage
+    wp_delete_post($likeId, true);
+    return 'Like deleted.';
+  } else {
+    die('You do not have permission to delete that.');
+  }
 }

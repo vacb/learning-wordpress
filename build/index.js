@@ -4037,7 +4037,7 @@ class Like {
   ourClickDispatcher(e) {
     let currentLikeBox = jquery__WEBPACK_IMPORTED_MODULE_0___default()(e.target).closest(".like-box");
 
-    if (currentLikeBox.data("exists") == "yes") {
+    if (currentLikeBox.attr("data-exists") == "yes") {
       this.deleteLike(currentLikeBox);
     } else {
       this.createLike(currentLikeBox);
@@ -4055,6 +4055,11 @@ class Like {
         academicId: currentLikeBox.data("academic")
       },
       success: response => {
+        currentLikeBox.attr("data-exists", "yes");
+        let likeCount = parseInt(currentLikeBox.find(".like-count").html(), 10);
+        likeCount++;
+        currentLikeBox.find(".like-count").html(likeCount);
+        currentLikeBox.attr("data-like", response);
         console.log(response);
       },
       error: response => {
@@ -4063,11 +4068,22 @@ class Like {
     });
   }
 
-  deleteLike() {
+  deleteLike(currentLikeBox) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default.a.ajax({
+      beforeSend: xhr => {
+        xhr.setRequestHeader("X-WP-Nonce", universityData.nonce);
+      },
       url: universityData.root_url + "/wp-json/university/v1/manageLike",
+      data: {
+        like: currentLikeBox.attr("data-like")
+      },
       type: "DELETE",
       success: response => {
+        currentLikeBox.attr("data-exists", "no");
+        let likeCount = parseInt(currentLikeBox.find(".like-count").html(), 10);
+        likeCount--;
+        currentLikeBox.find(".like-count").html(likeCount);
+        currentLikeBox.attr("data-like", "");
         console.log(response);
       },
       error: response => {
