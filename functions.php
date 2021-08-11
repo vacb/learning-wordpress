@@ -10,6 +10,11 @@ function university_custom_rest() {
             return get_the_author();
         }
     ));
+    register_rest_field('note', 'userNoteCount', array(
+        'get_callback' => function() {
+            return count_user_posts(get_current_user_id(), 'note');
+        }
+    ));
 }
 add_action('rest_api_init', 'university_custom_rest');
 
@@ -167,23 +172,27 @@ function ourLoginCSS() {
 }
 
 // Force note posts to be private
-add_filter('wp_insert_post_data', 'makeNotePrivate');
-function makeNotePrivate($data) {
-    if ($data['post_type'] == 'note' AND $data['post-status'] != 'trash') {
+add_filter('wp_insert_post_data', 'makeNotePrivate', 10, 2);
+function makeNotePrivate($data, $postarr) {
+    // Limit number of note posts per user
+    if ($data['post_type'] == 'note') {
+        // Count current user posts (user id, post type)
+        // Check for non-existence of an ID in postarr to establish that we're creating a new post - otherwise will run for del and edit too
+        if(count_user_posts(get_current_user_id(), 'note') > 4 AND !$postarr['ID']) {
+            die('You have reached your note limit.');
+        }
+    }
+
+    // Sanitise title and content fields
+    if ($data['post_type'] == 'note') {
+        $data['post_title'] = sanitize_text_field( $data['post_title'] );
+        $data['post_content'] = sanitize_textarea_field( $data['post_content'] );
+    }
+    // Make notes private by default
+    if ($data['post_type'] == 'note' AND $data['post_status'] != 'trash') {
         $data['post_status'] = "private";
     }
     
     return $data;
 }
 
-// Remove "Private: " from titles (not in lesson)
-// Use a regex to allow 'Private: ' in title if user manually entered it.
-add_filter('the_title', 'remove_private_prefix');
-function remove_private_prefix($title) {
-    if (get_post_status() == 'private') {
-      $regTitle = preg_replace('/^Private: /', '', $title);
-      return $regTitle;
-    } else {
-      return $title;
-    }
-  }
