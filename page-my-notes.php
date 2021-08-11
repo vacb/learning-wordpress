@@ -32,7 +32,8 @@
             $userNotes->the_post(); ?>
             <li data-id="<?php the_id(); ?>">
             <!-- Make title and body inputs read only on page load - will then remove this with the 'edit' button -->
-              <input readonly class="note-title-field" value="<?php echo esc_attr(get_the_title()); ?>">
+            <!-- Strip 'Private:' from the note title by getting the raw version -->
+              <input readonly class="note-title-field" value="<?php echo esc_attr(get_post_field('post_title', get_the_ID(), 'raw')); ?>">
               <span class="edit-note"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</span>
               <span class="delete-note"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
               <textarea readonly class="note-body-field">
