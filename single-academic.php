@@ -51,7 +51,6 @@
                   <!-- data-exists toggles yes/no depending on whether a post exists from the current user for the current academic -->
                   <!-- data-academic used to identify which academic is being targeted via $existQuery which sets $existStatus-->
                   <!-- data-like used when deleting the post to find the id of the like that needs deleting via $existQuery results array -->
-                  da
                     <span 
                       class="like-box" 
                       data-exists="<?php echo $existStatus; ?>" 
